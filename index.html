@@ -1,0 +1,825 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NurArtCraft Sergi Standı</title>
+<meta name="description" content="NurArtCraft el emeği boncuk ve elmas mozaik tabloları için sergi standı önerisi: 12 m² ve 15 m² seçenekleri, döndürülebilir 3B görünüm ve stantta gezme.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="NurArtCraft Sergi Standı">
+<meta property="og:description" content="NurArtCraft el emeği boncuk ve elmas mozaik tabloları için sergi standı önerisi: 12 m² ve 15 m² seçenekleri, döndürülebilir 3B görünüm ve stantta gezme.">
+<meta property="og:url" content="https://musabedirhansen.github.io/nurartcraft-sergi/">
+<meta property="og:image" content="https://musabedirhansen.github.io/nurartcraft-sergi/eserler/hayat-agaci.jpg">
+<meta name="theme-color" content="#1d3a56">
+<link rel="icon" href="eserler/semazen.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Marcellus&display=swap">
+<style>
+/* Düzen: solda tam yükseklikte 3B stant (döndürme + içeride gezme), sağda seçenek, ölçüler, plan ve eser listesi; 860px altında panel alta iner */
+:root{
+  --bg:#eceff3;
+  --surface:#ffffff;
+  --surface-2:#f3f5f8;
+  --ink:#1d3a56;
+  --muted:#5a6b7d;
+  --line:rgba(29,58,86,.14);
+  --accent:#2f7d77;
+  --accent-ink:#ffffff;
+  --accent-soft:rgba(47,125,119,.12);
+  --gold:#b8863a;
+  --ok:#2d7a4f;
+  --warn:#9a640f; --warn-bg:rgba(176,116,20,.13);
+  --scene:#dde2e8; --hall:#c9cfd6;
+  --plan-floor:#e4e9ef; --plan-aisle:#f6f7f9;
+  --f-display:"Marcellus",Georgia,"Times New Roman",serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"Cascadia Mono",Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0e151d; --surface:#151f2a; --surface-2:#1b2733; --ink:#e3eaf1; --muted:#98a9bb; --line:rgba(227,234,241,.13);
+    --accent:#55b5ab; --accent-ink:#062421; --accent-soft:rgba(85,181,171,.16); --gold:#e2b56b;
+    --ok:#62c590; --warn:#e8b25a; --warn-bg:rgba(232,178,90,.15);
+    --scene:#1a222c; --hall:#26303b; --plan-floor:#1f2a36; --plan-aisle:#16202a;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0e151d; --surface:#151f2a; --surface-2:#1b2733; --ink:#e3eaf1; --muted:#98a9bb; --line:rgba(227,234,241,.13);
+  --accent:#55b5ab; --accent-ink:#062421; --accent-soft:rgba(85,181,171,.16); --gold:#e2b56b;
+  --ok:#62c590; --warn:#e8b25a; --warn-bg:rgba(232,178,90,.15);
+  --scene:#1a222c; --hall:#26303b; --plan-floor:#1f2a36; --plan-aisle:#16202a;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:var(--f-body);font-size:14px;line-height:1.5;
+  padding-block:16px;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));
+  padding-right:max(16px, env(safe-area-inset-right, 0px));
+}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.app{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:16px;height:100%}
+.view{position:relative;min-height:0;border-radius:14px;overflow:hidden;background:var(--scene);border:1px solid var(--line)}
+.view canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+.view.gez canvas{cursor:crosshair}
+.side{min-height:0;overflow:auto;display:flex;flex-direction:column;gap:18px;padding:2px 4px 8px 2px}
+@media (max-width:860px){
+  html,body{height:auto}
+  .app{grid-template-columns:minmax(0,1fr);height:auto}
+  .view{height:68vh;min-height:400px}
+  .side{overflow:visible;padding:0}
+}
+
+.ov{position:absolute;z-index:2;top:12px;left:12px;right:12px;display:flex;flex-wrap:wrap;gap:6px;pointer-events:none}
+.ov > *{pointer-events:auto}
+.chip{font:500 12.5px/1 var(--f-body);padding:8px 11px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;box-shadow:0 2px 8px rgba(15,25,35,.08)}
+.chip:hover{border-color:var(--accent)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.chip.gez{border-color:var(--accent);color:var(--accent)}
+.chip.gez[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.hint{position:absolute;z-index:2;right:12px;bottom:12px;max-width:290px;font-size:12px;line-height:1.45;color:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:7px 10px}
+.card:not([hidden]) ~ .hint{display:none}
+@media (max-width:620px){.hint{left:12px;right:12px;max-width:none}}
+
+.card{position:absolute;left:12px;bottom:12px;z-index:3;width:min(330px, calc(100% - 24px));background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px 14px;box-shadow:0 14px 34px rgba(10,20,30,.2);display:flex;flex-direction:column;gap:6px}
+.card-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.card-kat{font:500 11px/1.2 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.x{border:0;background:none;font-size:20px;line-height:1;cursor:pointer;color:var(--muted);padding:2px 6px;border-radius:6px}
+.card h3{margin:0;font:400 19px/1.25 var(--f-display);text-wrap:balance}
+.card-meta{margin:0;font:500 12.5px/1.4 var(--f-mono)}
+.card-yer{margin:0;color:var(--muted);font-size:13px}
+.card .btn{align-self:flex-start;margin-top:4px}
+.tah{display:inline-block;font:500 10.5px/1 var(--f-body);color:var(--warn);background:var(--warn-bg);padding:3px 6px;border-radius:99px;margin-left:6px;vertical-align:2px}
+.btn{font:500 13px/1 var(--f-body);padding:9px 13px;border-radius:9px;border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink);cursor:pointer}
+.btn:hover{filter:brightness(1.06)}
+
+.eyebrow{margin:0;font:500 11px/1.2 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.surum{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.surum button{display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;padding:11px 12px;border-radius:11px;border:1px solid var(--line);background:var(--surface);cursor:pointer}
+.surum button:hover{border-color:var(--accent)}
+.surum button b{font:400 26px/1 var(--f-display);font-weight:400}
+.surum button span{font:500 12px/1.3 var(--f-mono);color:var(--muted)}
+.surum button[aria-pressed="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink);background:var(--surface-2)}
+.ozet{margin:12px 0 0;font-size:13.5px;max-width:60ch}
+
+section{border-top:1px solid var(--line);padding-top:14px;display:flex;flex-direction:column;gap:10px}
+h2{margin:0;font:400 18px/1.2 var(--f-display);text-wrap:balance}
+.bilgi{margin:0;display:grid;grid-template-columns:auto minmax(0,1fr);gap:7px 14px}
+.bilgi dt{color:var(--muted);font-size:13px}
+.bilgi dd{margin:0;font-size:13.5px;font-variant-numeric:tabular-nums}
+
+.plan svg{display:block;width:100%;height:auto}
+.p-aisle{fill:var(--plan-aisle)}
+.p-floor{fill:var(--plan-floor)}
+.p-grid{stroke:var(--muted);stroke-opacity:.35;stroke-width:1;stroke-dasharray:3 5}
+.p-wall{stroke:var(--ink);fill:none;stroke-width:8;stroke-linecap:square}
+.p-art{stroke:var(--accent);stroke-width:7}
+.p-art-sel{stroke:var(--gold);stroke-width:9}
+.p-easel{stroke:var(--gold);stroke-width:6;stroke-linecap:round}
+.p-leg{fill:var(--gold);fill-opacity:.22;stroke:var(--gold);stroke-opacity:.6;stroke-width:1}
+.p-num{fill:var(--surface);stroke:var(--gold);stroke-width:2}
+.p-numt{fill:var(--ink);font:600 14px var(--f-mono);text-anchor:middle;dominant-baseline:central}
+.p-dim{stroke:var(--muted);stroke-width:1.5}
+.p-dimt{fill:var(--muted);font:500 17px var(--f-mono);text-anchor:middle}
+.p-area{fill:var(--ink);font:500 30px var(--f-mono);text-anchor:middle}
+.p-aisle-t{fill:var(--muted);font:500 14px var(--f-mono);letter-spacing:.24em;text-anchor:middle}
+.p-entry{stroke:var(--ok);stroke-width:2.5;fill:none}
+.p-entry-h{fill:var(--ok)}
+.p-entry-t{fill:var(--ok);font:500 14px var(--f-mono);text-anchor:middle}
+.lejant{margin:0;color:var(--muted);font-size:12px}
+
+.grp{display:flex;flex-direction:column;gap:1px}
+.grp + .grp{margin-top:8px}
+.grp-h{font:600 11.5px/1.3 var(--f-body);text-transform:uppercase;letter-spacing:.09em;color:var(--muted);padding:0 8px 4px}
+.li{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:8px;width:100%;text-align:left;background:none;border:0;border-radius:7px;padding:6px 8px;cursor:pointer;align-items:baseline}
+.li:hover{background:var(--surface-2)}
+.li[aria-current="true"]{background:var(--accent-soft)}
+.li .k{font:500 11.5px var(--f-mono);color:var(--muted)}
+.li .a{min-width:0;font-size:13.5px}
+.li .s{display:block;font-size:12px;color:var(--muted)}
+.li .o{font:500 12px var(--f-mono);color:var(--muted);white-space:nowrap}
+.dip{margin:0;color:var(--muted);font-size:12px}
+.yukleniyor{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);font-size:13px;pointer-events:none}
+[hidden]{display:none!important}
+img{max-width:100%}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="view" id="view">
+    <div class="yukleniyor" id="yuk">3B sahne yükleniyor…</div>
+    <div class="ov" role="group" aria-label="Görünüm">
+      <button class="chip" data-cam="kose" aria-pressed="true">Köşeden</button>
+      <button class="chip" data-cam="koridor" aria-pressed="false">Koridordan</button>
+      <button class="chip" data-cam="ust" aria-pressed="false">Kuşbakışı</button>
+      <button class="chip gez" data-cam="gez" aria-pressed="false">İçeride gez</button>
+    </div>
+    <div class="card" id="card" hidden>
+      <div class="card-top"><span class="card-kat" id="cKat"></span><button class="x" id="cKapat" aria-label="Kapat">×</button></div>
+      <h3 id="cAd"></h3>
+      <p class="card-meta" id="cMeta"></p>
+      <p class="card-yer" id="cYer"></p>
+      <button class="btn" id="cBak">Yakından bak</button>
+    </div>
+    <div class="hint" id="hint">Sürükleyerek döndürün, tekerlekle yakınlaşın. Bir esere tıklayınca bilgisi açılır.</div>
+  </div>
+
+  <aside class="side">
+    <header>
+      <p class="eyebrow">NurArtCraft · Sergi standı önerisi</p>
+      <div class="surum" role="group" aria-label="Stant seçeneği">
+        <button data-surum="asgari" aria-pressed="true"><b>12 m²</b><span>4 × 3 m · asgari</span></button>
+        <button data-surum="rahat" aria-pressed="false"><b>15 m²</b><span>5 × 3 m · rahat</span></button>
+      </div>
+      <p class="ozet" id="ozet">Bütün eserlerin sığdığı en küçük düzen. Duvardaki eserlerin arası 15 cm.</p>
+    </header>
+
+    <section>
+      <h2>Stant</h2>
+      <dl class="bilgi" id="bilgi">
+        <dt>Ölçü</dt><dd>4,0 m cephe × 3,0 m derinlik</dd>
+        <dt>Duvarlar</dt><dd>Arka + iki yan, 2,5 m panel</dd>
+        <dt>Eserler</dt><dd>18 eser: 13'ü duvarda iki sıra, 5'i şövalede</dd>
+      </dl>
+    </section>
+
+    <section class="plan">
+      <h2>Plan</h2>
+      <div id="plan"></div>
+      <p class="lejant">Yeşil çizgiler duvardaki eser sütunları, altın çizgiler şövaleler. Kesikli ızgara 1 m.</p>
+    </section>
+
+    <section>
+      <h2>Eserler</h2>
+      <div id="liste"></div>
+      <p class="dip">Ölçüler çerçeve dahildir. "Yaklaşık" işaretli üç eserin ölçüsü kesinleşmedi.</p>
+    </section>
+  </aside>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+(function(){
+'use strict';
+const $ = s => document.querySelector(s);
+
+const ESER = {
+  'nas-teal':        {ad:'Nâs Sûresi (yeşil)', kat:'Hat & Dini', g:61.5, y:72},
+  'nas-navy':        {ad:'Nâs Sûresi (lacivert)', kat:'Hat & Dini', g:61.5, y:72},
+  'uc-kul':          {ad:'Üç Kul', kat:'Hat & Dini', g:60, y:84},
+  'kelime-i-tevhid': {ad:'Kelime-i Tevhid', kat:'Hat & Dini', g:59, y:77.5},
+  'semazen':         {ad:'Semazen', kat:'Hat & Dini', g:45, y:65},
+  'allah-muhammed':  {ad:'Allah · Muhammed & Kâbe', kat:'Hat & Dini', g:128, y:49.5},
+  'rabbi-dua':       {ad:"Rabbi'c-alnî", kat:'Hat & Dini', g:112, y:65.5},
+  'ayetel-kursi':    {ad:"Âyetü'l-Kürsî", kat:'Hat & Dini', g:58, y:77, tahmin:true},
+  'osmanli-armasi':  {ad:'Osmanlı Arması', kat:'Tarih & Kültür', g:50, y:52, tahmin:true},
+  'beyaz-at':        {ad:'Beyaz At', kat:'Hayvan Portreleri', g:56, y:71},
+  'iki-at':          {ad:'İki At', kat:'Hayvan Portreleri', g:56.5, y:76},
+  'karda-atlar':     {ad:'Karda Koşan Atlar', kat:'Hayvan Portreleri', g:51, y:74.5},
+  'leopar':          {ad:'Leopar', kat:'Hayvan Portreleri', g:60, y:60},
+  'leopar-kukreyen': {ad:'Kükreyen Leopar', kat:'Hayvan Portreleri', g:58, y:71, tahmin:true},
+  'alman-kurdu':     {ad:'Alman Kurdu', kat:'Hayvan Portreleri', g:56, y:75},
+  'anka':            {ad:'Anka Kuşu', kat:'Doğa & Manzara', g:73, y:52.5},
+  'hayat-agaci':     {ad:'Hayat Ağacı', kat:'Doğa & Manzara', g:81, y:63.5},
+  'naturmort':       {ad:'Papatyalar', kat:'Natürmort', g:59, y:79}
+};
+
+const HW = 2.5, AXIS = 1.5, FD = 0.035, NEAR = 0.9, CLEAR = 0.06, ENTRY = 0.9, REAR = 0.36, EPS = 1e-6, EYE = 1.6;
+const SURUM = {
+  asgari:{W:4, D:3, hgap:0.15, vgap:0.15, ozet:'Bütün eserlerin sığdığı en küçük düzen. Duvardaki eserlerin arası 15 cm.'},
+  rahat: {W:5, D:3, hgap:0.25, vgap:0.20, ozet:'Aynı yerleşim, bir metre daha geniş cephe. Eserlerin arası 25 cm, girişler daha geniş, ziyaretçi için daha ferah.'}
+};
+const SPOTS = {
+  BL:{ad:'Arka sol köşe', at:(W,D)=>({x:0.311, z:0.311, r: Math.PI/4})},
+  BR:{ad:'Arka sağ köşe', at:(W,D)=>({x:W-0.311, z:0.311, r:-Math.PI/4})},
+  FL:{ad:'Ön sol köşe',   at:(W,D)=>({x:0.40, z:D-0.40, r: Math.PI/4})},
+  FR:{ad:'Ön sağ köşe',   at:(W,D)=>({x:W-0.40, z:D-0.40, r:-Math.PI/4})},
+  FC:{ad:'Ön orta',       at:(W,D)=>({x:W/2, z:D-0.30, r:0})}
+};
+const WALLS = {
+  back: {ad:'Arka duvar', len:(W,D)=>W, a:q=>q.x, n:(q,W,D)=>q.z, front:false},
+  left: {ad:'Sol duvar',  len:(W,D)=>D, a:q=>q.z, n:(q,W,D)=>q.x, front:true},
+  right:{ad:'Sağ duvar',  len:(W,D)=>D, a:q=>q.z, n:(q,W,D)=>W-q.x, front:true}
+};
+const WK = ['back','left','right'];
+const DUZEN = {
+  walls:{
+    back:[['nas-teal','kelime-i-tevhid'],['allah-muhammed','rabbi-dua'],['nas-navy','ayetel-kursi']],
+    left:[['beyaz-at','iki-at'],['karda-atlar','alman-kurdu']],
+    right:[['leopar','naturmort'],['uc-kul']]
+  },
+  easels:[
+    {n:1, art:'hayat-agaci', spot:'FL'},
+    {n:2, art:'leopar-kukreyen', spot:'FC'},
+    {n:3, art:'anka', spot:'FR'},
+    {n:4, art:'semazen', spot:'BL'},
+    {n:5, art:'osmanli-armasi', spot:'BR'}
+  ]
+};
+let surumAd = location.hash === '#rahat' ? 'rahat' : 'asgari';
+let cur = SURUM[surumAd];
+let sel = null, res = null;
+
+const f1 = v => v.toFixed(1).replace('.', ',');
+const cm = v => Math.round(v*100) + ' cm';
+const sayi = n => String(n).replace('.', ',');
+const clamp = (v, a, b) => Math.min(Math.max(v, a), b);
+function fA(v){ const r = Math.round(v*100)/100; return Math.abs(r-Math.round(r)) < 1e-9 ? String(Math.round(r)) : r.toFixed(2).replace(/0$/,'').replace('.', ','); }
+const olc = id => `${sayi(ESER[id].g)} × ${sayi(ESER[id].y)} cm`;
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ---------- Yerleşim hesabı ---------- */
+function geom(e, W, D){
+  const p = SPOTS[e.spot].at(W, D), w = ESER[e.art].g/100;
+  const fx = Math.sin(p.r), fz = Math.cos(p.r), px = Math.cos(p.r), pz = -Math.sin(p.r);
+  const E1 = {x:p.x+px*w/2, z:p.z+pz*w/2}, E2 = {x:p.x-px*w/2, z:p.z-pz*w/2};
+  const L1 = {x:p.x+px*0.27+fx*0.10, z:p.z+pz*0.27+fz*0.10};
+  const L2 = {x:p.x-px*0.27+fx*0.10, z:p.z-pz*0.27+fz*0.10};
+  const R  = {x:p.x-fx*REAR, z:p.z-fz*REAR};
+  const pts = [E1, E2, L1, L2, R], xs = pts.map(q=>q.x), zs = pts.map(q=>q.z);
+  return {p, w, f:{x:fx, z:fz}, E1, E2, L1, L2, R, pts, x0:Math.min(...xs), x1:Math.max(...xs), z0:Math.min(...zs), z1:Math.max(...zs)};
+}
+function hesapla(v){
+  const W = v.W, D = v.D;
+  const eg = DUZEN.easels.map(e => ({e, g:geom(e, W, D)}));
+  const walls = {};
+  for (const k of WK){
+    const def = WALLS[k], len = def.len(W, D);
+    let r0 = 0.25, r1 = def.front ? 0.15 : 0.25;
+    for (const {g} of eg){
+      if (Math.min(...g.pts.map(q => def.n(q, W, D))) >= NEAR) continue;
+      const a1 = def.a(g.E1), a2 = def.a(g.E2), amin = Math.min(a1, a2), amax = Math.max(a1, a2);
+      if (amin < 1.0) r0 = Math.max(r0, amax + CLEAR);
+      else if (amax > len - 1.0) r1 = Math.max(r1, len - amin + CLEAR);
+    }
+    const cols = DUZEN.walls[k];
+    const cw = cols.map(c => Math.max(...c.map(id => ESER[id].g))/100);
+    const icerik = cw.reduce((t, x) => t + x, 0) + v.hgap*Math.max(0, cols.length - 1);
+    const pay = (len - r1 - r0) - icerik;
+    let c = r0 + pay/2;
+    const items = [];
+    cols.forEach((col, ci) => {
+      const mid = c + cw[ci]/2;
+      col.forEach((id, ri) => {
+        const w = ESER[id].g/100, h = ESER[id].y/100;
+        const y = col.length === 1 ? AXIS : (ri === 0 ? AXIS + v.vgap/2 + h/2 : AXIS - v.vgap/2 - h/2);
+        items.push({id, wall:k, ci, ri, n:col.length, a:mid, y, w, h, cw:cw[ci]});
+      });
+      c += cw[ci] + v.hgap;
+    });
+    walls[k] = {len, items};
+  }
+  const band = eg.filter(({g}) => g.z1 > D - 1.0).map(({g}) => [Math.max(0, g.x0), Math.min(W, g.x1)]).sort((a, b) => a[0] - b[0]);
+  const gaps = []; let c = 0;
+  for (const [a, b] of band){ if (a > c + EPS) gaps.push([c, a]); c = Math.max(c, b); }
+  if (W > c + EPS) gaps.push([c, W]);
+  const girisler = gaps.filter(([a, b]) => b - a >= ENTRY - EPS);
+  let dol = D - NEAR;
+  for (const {g} of eg) if (g.x1 > NEAR && g.x0 < W - NEAR && g.z1 > NEAR) dol = Math.min(dol, g.z0 - NEAR);
+  return {W, D, eg, walls, girisler, dol:Math.max(0, dol)};
+}
+function bul(id){
+  for (const k of WK){
+    const cols = DUZEN.walls[k];
+    for (let ci = 0; ci < cols.length; ci++){ const ri = cols[ci].indexOf(id); if (ri >= 0) return {tip:'duvar', k, ci, ri, n:cols[ci].length}; }
+  }
+  const e = DUZEN.easels.find(e => e.art === id);
+  return e ? {tip:'sovale', e} : null;
+}
+function yerMetni(id){
+  const l = bul(id); if (!l) return '';
+  if (l.tip === 'duvar') return `${WALLS[l.k].ad} · ${l.ci + 1}. sütun · ${l.n === 1 ? 'tek eser' : (l.ri === 0 ? 'üst sıra' : 'alt sıra')}`;
+  return `Şövale ${l.e.n} · ${SPOTS[l.e.spot].ad}`;
+}
+
+/* ---------- 3B sahne ---------- */
+const view = $('#view');
+const V3 = THREE.Vector3;
+const lin = hex => new THREE.Color(hex).convertSRGBToLinear();
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+view.prepend(renderer.domElement);
+const yuk = $('#yuk'); if (yuk) yuk.remove();
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(45, 1, 0.05, 120);
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true; controls.dampingFactor = 0.09;
+controls.maxPolarAngle = Math.PI*0.495; controls.minDistance = 0.8; controls.maxDistance = 20;
+
+const MAT = {
+  wall:  new THREE.MeshStandardMaterial({color:lin('#f1f1ee'), roughness:0.93}),
+  post:  new THREE.MeshStandardMaterial({color:lin('#b3bac2'), roughness:0.35, metalness:0.55}),
+  carpet:new THREE.MeshStandardMaterial({color:lin('#4a5562'), roughness:1}),
+  hall:  new THREE.MeshStandardMaterial({color:lin('#c9cfd6'), roughness:0.96}),
+  frame: new THREE.MeshStandardMaterial({color:lin('#2c2119'), roughness:0.55}),
+  back:  new THREE.MeshStandardMaterial({color:lin('#7a6650'), roughness:0.9}),
+  wood:  new THREE.MeshStandardMaterial({color:lin('#8d6b47'), roughness:0.62}),
+  person:new THREE.MeshStandardMaterial({color:lin('#8a96a4'), roughness:0.85})
+};
+scene.add(new THREE.HemisphereLight(0xffffff, 0x8e97a1, 0.72));
+scene.add(new THREE.AmbientLight(0xffffff, 0.16));
+const sun = new THREE.DirectionalLight(0xffffff, 0.62);
+sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048); sun.shadow.bias = -0.0004;
+Object.assign(sun.shadow.camera, {left:-7, right:7, top:7, bottom:-7, near:0.5, far:30});
+sun.shadow.camera.updateProjectionMatrix();
+scene.add(sun); scene.add(sun.target);
+const hall = new THREE.Mesh(new THREE.PlaneGeometry(60, 60), MAT.hall);
+hall.rotation.x = -Math.PI/2; hall.receiveShadow = true; scene.add(hall);
+
+function kutu(parent, mat, w, h, d, x, y, z, golge){
+  const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
+  m.position.set(x, y, z); m.receiveShadow = true; m.castShadow = !!golge; parent.add(m); return m;
+}
+function moduller(L){ const a = []; for (let i = 0; i <= Math.floor(L + 1e-6); i++) a.push(i); if (L - Math.floor(L + 1e-6) > 0.02) a.push(L); return a; }
+
+const fasCanvas = document.createElement('canvas');
+const fasTex = new THREE.CanvasTexture(fasCanvas); fasTex.encoding = THREE.sRGBEncoding;
+const fasMat = new THREE.MeshStandardMaterial({map:fasTex, roughness:0.8});
+function fasCiz(W){
+  const cw = 2048, ch = Math.max(64, Math.round(cw*0.30/(W + 0.1)));
+  fasCanvas.width = cw; fasCanvas.height = ch;
+  const x = fasCanvas.getContext('2d');
+  x.fillStyle = '#f7f4ee'; x.fillRect(0, 0, cw, ch);
+  x.fillStyle = '#1d3a56'; x.font = `${Math.round(ch*0.56)}px Marcellus, Georgia, serif`;
+  x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('NurArtCraft', cw/2, ch*0.52);
+  x.fillStyle = '#cd9a4d'; x.fillRect(cw*0.3, ch*0.86, cw*0.4, Math.max(2, ch*0.025));
+  fasTex.needsUpdate = true;
+}
+
+const insan = new THREE.Group();
+(function(){
+  const add = (geo, x, y, z) => { const m = new THREE.Mesh(geo, MAT.person); m.position.set(x, y, z); m.castShadow = true; insan.add(m); };
+  add(new THREE.CylinderGeometry(0.06, 0.055, 0.86, 12), -0.085, 0.43, 0);
+  add(new THREE.CylinderGeometry(0.06, 0.055, 0.86, 12), 0.085, 0.43, 0);
+  add(new THREE.CylinderGeometry(0.17, 0.14, 0.62, 16), 0, 1.17, 0);
+  add(new THREE.SphereGeometry(0.105, 18, 14), 0, 1.595, 0);
+  insan.rotation.y = -0.6;
+})();
+scene.add(insan);
+
+let standGrp = null;
+function standKur(){
+  if (standGrp){ scene.remove(standGrp); standGrp.traverse(o => { if (o.geometry) o.geometry.dispose(); }); }
+  const g = new THREE.Group(), W = cur.W, D = cur.D, T = 0.05;
+  const carpet = new THREE.Mesh(new THREE.PlaneGeometry(W, D), MAT.carpet);
+  carpet.rotation.x = -Math.PI/2; carpet.position.set(W/2, 0.003, D/2); carpet.receiveShadow = true; g.add(carpet);
+  const p = [];
+  for (let x = 0.5; x < W - 0.01; x += 0.5) p.push(x, 0.006, 0, x, 0.006, D);
+  for (let z = 0.5; z < D - 0.01; z += 0.5) p.push(0, 0.006, z, W, 0.006, z);
+  const gg = new THREE.BufferGeometry(); gg.setAttribute('position', new THREE.Float32BufferAttribute(p, 3));
+  g.add(new THREE.LineSegments(gg, new THREE.LineBasicMaterial({color:0x8a96a3, transparent:true, opacity:0.35})));
+  kutu(g, MAT.wall, W + 2*T, HW, T, W/2, HW/2, -T/2);
+  kutu(g, MAT.wall, T, HW, D, -T/2, HW/2, D/2);
+  kutu(g, MAT.wall, T, HW, D, W + T/2, HW/2, D/2);
+  moduller(W).forEach(x => kutu(g, MAT.post, 0.04, HW, 0.02, x, HW/2, 0));
+  moduller(D).forEach(z => { kutu(g, MAT.post, 0.02, HW, 0.04, 0, HW/2, z); kutu(g, MAT.post, 0.02, HW, 0.04, W, HW/2, z); });
+  kutu(g, MAT.post, W, 0.04, 0.03, W/2, HW - 0.02, 0.005);
+  kutu(g, MAT.post, 0.03, 0.04, D, 0.005, HW - 0.02, D/2);
+  kutu(g, MAT.post, 0.03, 0.04, D, W - 0.005, HW - 0.02, D/2);
+  fasCiz(W);
+  const fas = new THREE.Mesh(new THREE.BoxGeometry(W + 0.1, 0.30, 0.03), [MAT.post, MAT.post, MAT.post, MAT.post, fasMat, MAT.post]);
+  fas.position.set(W/2, HW - 0.15, D + 0.015); fas.castShadow = true; g.add(fas);
+  scene.add(g); standGrp = g;
+  sun.position.set(W/2 + 3.5, 7, D + 5); sun.target.position.set(W/2, 0, D/2);
+  insan.position.set(W + 0.75, 0, D + 1.25);
+}
+
+const loader = new THREE.TextureLoader();
+const maxAniso = renderer.capabilities.getMaxAnisotropy();
+const PM = {};
+for (const id in ESER){
+  const w = ESER[id].g/100, h = ESER[id].y/100;
+  const tex = loader.load('eserler/' + id + '.jpg');
+  tex.encoding = THREE.sRGBEncoding; tex.anisotropy = maxAniso;
+  const front = new THREE.MeshStandardMaterial({map:tex, roughness:0.48});
+  const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, FD), [MAT.frame, MAT.frame, MAT.frame, MAT.frame, front, MAT.back]);
+  m.castShadow = true; m.userData.art = id; PM[id] = m;
+}
+const pickables = Object.values(PM);
+
+const Y0 = 0.84, TILT = 0.093, ZB = 0.10 - 0.162*(Y0/1.74) + FD/2 + 0.006;
+function cyl(a, b, r, mat){
+  const d = new V3().subVectors(b, a), L = d.length();
+  const m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, L, 10), mat);
+  m.position.copy(a).addScaledVector(d, 0.5);
+  m.quaternion.setFromUnitVectors(new V3(0, 1, 0), d.normalize());
+  return m;
+}
+const EM = {};
+DUZEN.easels.forEach(e => {
+  const g = new THREE.Group(); g.userData.easel = e.n;
+  const ekle = m => { m.userData.easel = e.n; m.castShadow = true; g.add(m); pickables.push(m); };
+  ekle(cyl(new V3(0.27, 0, 0.10), new V3(0.045, 1.74, -0.062), 0.016, MAT.wood));
+  ekle(cyl(new V3(-0.27, 0, 0.10), new V3(-0.045, 1.74, -0.062), 0.016, MAT.wood));
+  ekle(cyl(new V3(0, 0, -REAR), new V3(0, 1.62, -0.075), 0.014, MAT.wood));
+  const ledge = new THREE.Mesh(new THREE.BoxGeometry(0.66, 0.024, 0.085), MAT.wood); ledge.position.set(0, Y0 - 0.012, 0.035); ekle(ledge);
+  const lip = new THREE.Mesh(new THREE.BoxGeometry(0.66, 0.035, 0.012), MAT.wood); lip.position.set(0, Y0 + 0.006, 0.074); ekle(lip);
+  const top = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.035, 0.05), MAT.wood); top.position.set(0, 1.71, -0.055); ekle(top);
+  scene.add(g); EM[e.n] = g;
+});
+
+const halo = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({color:0xb8863a, side:THREE.DoubleSide}));
+function haloTak(){
+  if (halo.parent) halo.parent.remove(halo);
+  if (!sel) return;
+  halo.scale.set(ESER[sel].g/100 + 0.06, ESER[sel].y/100 + 0.06, 1);
+  halo.position.set(0, 0, -FD/2 - 0.003);
+  PM[sel].add(halo);
+}
+function yerlestir(){
+  const off = 0.02 + FD/2;
+  for (const k of WK) for (const it of res.walls[k].items){
+    const m = PM[it.id]; scene.add(m);
+    if (k === 'back'){ m.position.set(it.a, it.y, off); m.rotation.set(0, 0, 0); }
+    else if (k === 'left'){ m.position.set(off, it.y, it.a); m.rotation.set(0, Math.PI/2, 0); }
+    else { m.position.set(cur.W - off, it.y, it.a); m.rotation.set(0, -Math.PI/2, 0); }
+  }
+  for (const {e, g} of res.eg){
+    const grp = EM[e.n]; grp.position.set(g.p.x, 0, g.p.z); grp.rotation.set(0, g.p.r, 0);
+    const m = PM[e.art], h = ESER[e.art].y/100; grp.add(m);
+    m.rotation.set(-TILT, 0, 0);
+    m.position.set(0, Y0 + (h/2)*Math.cos(TILT), ZB - (h/2)*Math.sin(TILT));
+  }
+  haloTak();
+}
+
+/* ---------- Kamera: döndürme ---------- */
+const KAMERA = {
+  kose:   (W, D) => ({p:[W + 2.4, 2.35, D + 3.3], t:[W*0.46, 1.15, D*0.42]}),
+  koridor:(W, D) => ({p:[W/2, 1.62, D + 3.4], t:[W/2, 1.35, 0.4]}),
+  ust:    (W, D) => ({p:[W/2, 4.2 + Math.max(W, D)*1.25, D/2 + 0.6], t:[W/2, 0, D/2]})
+};
+const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const dokunmatik = window.matchMedia('(pointer: coarse)').matches;
+let mod = 'orbit', aktifKam = 'kose', tw = null;
+function kamBtn(){ document.querySelectorAll('[data-cam]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.cam === aktifKam))); }
+function ipucu(){
+  const h = $('#hint');
+  if (mod === 'gez') h.textContent = 'Sürükleyerek etrafa bakın. Yere dokununca oraya yürürsünüz, esere dokununca önüne gidersiniz.' + (dokunmatik ? '' : ' Klavyede W A S D ile yürüyün, oklarla dönün.');
+  else h.textContent = 'Sürükleyerek döndürün, ' + (dokunmatik ? 'iki parmakla yakınlaşın.' : 'tekerlekle yakınlaşın.') + ' Bir esere dokununca bilgisi açılır. "İçeride gez" ile standın içinde dolaşabilirsiniz.';
+}
+function orbitDon(){
+  if (mod === 'orbit') return;
+  mod = 'orbit'; view.classList.remove('gez'); walk = null;
+  const dir = new V3(); camera.getWorldDirection(dir);
+  controls.target.copy(camera.position).addScaledVector(dir, 2);
+  camera.fov = 45; camera.updateProjectionMatrix();
+  controls.enabled = true;
+}
+function kameraGit(ad, aninda){
+  if (ad === 'gez'){ gezBasla(); return; }
+  orbitDon();
+  aktifKam = ad; kamBtn(); ipucu();
+  const k = KAMERA[ad](cur.W, cur.D), p = new V3(...k.p), t = new V3(...k.t);
+  if (aninda || reduce){ camera.position.copy(p); controls.target.copy(t); controls.update(); tw = null; return; }
+  tw = {p0:camera.position.clone(), t0:controls.target.clone(), p, t, s:performance.now(), d:650};
+}
+controls.addEventListener('start', () => { tw = null; if (mod === 'orbit'){ aktifKam = null; kamBtn(); } });
+
+/* ---------- İçeride gezme ---------- */
+let yaw = 0, pitch = 0, walk = null;
+const keys = {};
+function bakisUygula(){ camera.rotation.set(pitch, yaw, 0, 'YXZ'); }
+function sinirla(x, z){
+  const W = cur.W, D = cur.D;
+  z = clamp(z, 0.6, D + 3.0);
+  x = z < D + 0.1 ? clamp(x, 0.45, W - 0.45) : clamp(x, -2.5, W + 2.5);
+  for (const {g} of res.eg){
+    const m = 0.22, x0 = g.x0 - m, x1 = g.x1 + m, z0 = g.z0 - m, z1 = g.z1 + m;
+    if (x > x0 && x < x1 && z > z0 && z < z1){
+      const sec = [[x0 - x, 0], [x1 - x, 0], [0, z0 - z], [0, z1 - z]]
+        .filter(([dx, dz]) => { const nx = x + dx, nz = z + dz; return nz >= 0.6 && (nz >= D + 0.1 || (nx >= 0.45 && nx <= W - 0.45)); })
+        .sort((a, b) => Math.hypot(a[0], a[1]) - Math.hypot(b[0], b[1]))[0];
+      if (sec){ x += sec[0]; z += sec[1]; }
+    }
+  }
+  return {x, z};
+}
+function yuru(x, z, P){
+  const q = sinirla(x, z);
+  const from = camera.position.clone(), to = new V3(q.x, EYE, q.z);
+  let y1 = yaw, p1 = pitch;
+  if (P){ const d = new V3().subVectors(P, to); y1 = Math.atan2(-d.x, -d.z); p1 = Math.atan2(d.y, Math.hypot(d.x, d.z)); }
+  else { const d = new V3().subVectors(to, from); if (Math.hypot(d.x, d.z) > 0.3){ y1 = Math.atan2(-d.x, -d.z); p1 = -0.04; } }
+  const dy = Math.atan2(Math.sin(y1 - yaw), Math.cos(y1 - yaw));
+  const dist = from.distanceTo(to);
+  walk = {from, to, y0:yaw, y1:yaw + dy, p0:pitch, p1, s:performance.now(), d: reduce ? 1 : Math.min(1500, 450 + dist*380)};
+}
+function gezBasla(){
+  if (mod !== 'gez'){
+    tw = null; mod = 'gez'; controls.enabled = false; view.classList.add('gez');
+    const dir = new V3(); camera.getWorldDirection(dir);
+    yaw = Math.atan2(-dir.x, -dir.z); pitch = Math.asin(clamp(dir.y, -1, 1)); bakisUygula();
+    camera.fov = 60; camera.updateProjectionMatrix();
+  }
+  aktifKam = 'gez'; kamBtn(); ipucu();
+  yuru(cur.W/2, cur.D - 1.05, new V3(cur.W/2, 1.45, 0));
+}
+function goruNoktasi(id){
+  const l = bul(id);
+  if (l.tip === 'duvar'){
+    const it = res.walls[l.k].items.find(i => i.id === id);
+    if (l.k === 'back') return {pos:{x:it.a, z:1.35}, P:new V3(it.a, it.y, 0.04)};
+    if (l.k === 'left') return {pos:{x:1.35, z:it.a}, P:new V3(0.04, it.y, it.a)};
+    return {pos:{x:cur.W - 1.35, z:it.a}, P:new V3(cur.W - 0.04, it.y, it.a)};
+  }
+  const g = res.eg.find(x => x.e.art === id).g, h = ESER[id].y/100;
+  return {pos:{x:g.p.x + g.f.x*1.4, z:g.p.z + g.f.z*1.4}, P:new V3(g.p.x, Y0 + h/2, g.p.z)};
+}
+function yakindanBak(id){
+  if (mod !== 'gez'){
+    tw = null; mod = 'gez'; controls.enabled = false; view.classList.add('gez');
+    const dir = new V3(); camera.getWorldDirection(dir);
+    yaw = Math.atan2(-dir.x, -dir.z); pitch = Math.asin(clamp(dir.y, -1, 1)); bakisUygula();
+    camera.fov = 60; camera.updateProjectionMatrix();
+    aktifKam = 'gez'; kamBtn(); ipucu();
+  }
+  const {pos, P} = goruNoktasi(id);
+  yuru(pos.x, pos.z, P);
+}
+
+/* ---------- Panel ---------- */
+function renderPanel(){
+  document.querySelectorAll('[data-surum]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.surum === surumAd)));
+  $('#ozet').textContent = cur.ozet;
+  const nDuvar = WK.reduce((t, k) => t + res.walls[k].items.length, 0);
+  const rows = [
+    ['Alan', `${fA(cur.W*cur.D)} m²`],
+    ['Ölçü', `${f1(cur.W)} m cephe × ${f1(cur.D)} m derinlik`],
+    ['Duvarlar', `Arka + iki yan, 2,5 m panel (toplam ${f1(cur.W + 2*cur.D)} m)`],
+    ['Eserler', `18 eser: ${nDuvar}'ü duvarda iki sıra, ${DUZEN.easels.length}'i şövalede`],
+    ['Eser arası', `${cm(cur.hgap)} yan yana, ${cm(cur.vgap)} alt alta`],
+    ['Girişler', `${res.girisler.length} giriş, ${res.girisler.map(([a, b]) => cm(b - a)).join(' ve ')}`],
+    ['Ortada geçiş', cm(res.dol)]
+  ];
+  $('#bilgi').innerHTML = rows.map(([a, b]) => `<dt>${a}</dt><dd>${esc(b)}</dd>`).join('');
+  renderPlan(); renderListe(); renderKart();
+}
+function renderPlan(){
+  const W = cur.W, D = cur.D, S = 100, m = 0.7, ai = 1.0;
+  const VW = (W + 2*m)*S, VH = (D + m + ai)*S;
+  const X = x => ((x + m)*S).toFixed(1), Z = z => ((z + m)*S).toFixed(1), Zn = z => (z + m)*S;
+  let s = `<svg viewBox="0 0 ${VW.toFixed(0)} ${VH.toFixed(0)}" role="img" aria-label="Stant planı, ${f1(W)} × ${f1(D)} m">`;
+  s += `<defs><marker id="ok" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="p-entry-h" d="M0,0 L10,5 L0,10 z"/></marker></defs>`;
+  s += `<rect class="p-aisle" x="0" y="${Z(D)}" width="${VW.toFixed(0)}" height="${(ai*S).toFixed(0)}"/>`;
+  s += `<text class="p-aisle-t" x="${(VW/2).toFixed(0)}" y="${((D + m + ai*0.8)*S).toFixed(0)}">KORİDOR</text>`;
+  s += `<rect class="p-floor" x="${X(0)}" y="${Z(0)}" width="${(W*S).toFixed(1)}" height="${(D*S).toFixed(1)}"/>`;
+  for (let x = 1; x < W - 0.01; x++) s += `<line class="p-grid" x1="${X(x)}" y1="${Z(0)}" x2="${X(x)}" y2="${Z(D)}"/>`;
+  for (let z = 1; z < D - 0.01; z++) s += `<line class="p-grid" x1="${X(0)}" y1="${Z(z)}" x2="${X(W)}" y2="${Z(z)}"/>`;
+  s += `<path class="p-wall" d="M${X(0)},${Z(D)} V${Z(0)} H${X(W)} V${Z(D)}"/>`;
+  const ins = 0.1;
+  for (const k of WK){
+    const seen = {};
+    for (const it of res.walls[k].items){
+      const secili = sel && DUZEN.walls[k][it.ci].includes(sel);
+      if (seen[it.ci] && !secili) continue; seen[it.ci] = true;
+      const a0 = it.a - it.cw/2, a1 = it.a + it.cw/2, cls = secili ? 'p-art-sel' : 'p-art';
+      if (k === 'back') s += `<line class="${cls}" x1="${X(a0)}" y1="${Z(ins)}" x2="${X(a1)}" y2="${Z(ins)}"/>`;
+      else if (k === 'left') s += `<line class="${cls}" x1="${X(ins)}" y1="${Z(a0)}" x2="${X(ins)}" y2="${Z(a1)}"/>`;
+      else s += `<line class="${cls}" x1="${X(W - ins)}" y1="${Z(a0)}" x2="${X(W - ins)}" y2="${Z(a1)}"/>`;
+    }
+  }
+  for (const {e, g} of res.eg){
+    s += `<polygon class="p-leg" points="${X(g.L1.x)},${Z(g.L1.z)} ${X(g.L2.x)},${Z(g.L2.z)} ${X(g.R.x)},${Z(g.R.z)}"/>`;
+    s += `<line class="p-easel" x1="${X(g.E1.x)}" y1="${Z(g.E1.z)}" x2="${X(g.E2.x)}" y2="${Z(g.E2.z)}"${sel === e.art ? ' style="stroke-width:9"' : ''}/>`;
+    const cx = g.p.x - g.f.x*0.17, cz = g.p.z - g.f.z*0.17;
+    s += `<circle class="p-num" cx="${X(cx)}" cy="${Z(cz)}" r="12"/><text class="p-numt" x="${X(cx)}" y="${Z(cz)}">${e.n}</text>`;
+  }
+  const yd = (m - 0.36)*S;
+  s += `<line class="p-dim" x1="${X(0)}" y1="${yd}" x2="${X(W)}" y2="${yd}"/><line class="p-dim" x1="${X(0)}" y1="${yd - 8}" x2="${X(0)}" y2="${yd + 8}"/><line class="p-dim" x1="${X(W)}" y1="${yd - 8}" x2="${X(W)}" y2="${yd + 8}"/>`;
+  s += `<text class="p-dimt" x="${X(W/2)}" y="${yd - 9}">${f1(W)} m</text>`;
+  const xd = (W + m + 0.36)*S;
+  s += `<line class="p-dim" x1="${xd}" y1="${Z(0)}" x2="${xd}" y2="${Z(D)}"/><line class="p-dim" x1="${xd - 8}" y1="${Z(0)}" x2="${xd + 8}" y2="${Z(0)}"/><line class="p-dim" x1="${xd - 8}" y1="${Z(D)}" x2="${xd + 8}" y2="${Z(D)}"/>`;
+  s += `<text class="p-dimt" transform="translate(${xd + 20} ${Z(D/2)}) rotate(90)" x="0" y="0">${f1(D)} m</text>`;
+  s += `<text class="p-area" x="${X(W/2)}" y="${Z(Math.min(D*0.45, D - 1.0))}">${fA(W*D)} m²</text>`;
+  for (const [a, b] of res.girisler){
+    const xc = (a + b)/2;
+    s += `<line class="p-entry" x1="${X(xc)}" y1="${(Zn(D) + 48).toFixed(1)}" x2="${X(xc)}" y2="${(Zn(D) + 8).toFixed(1)}" marker-end="url(#ok)"/>`;
+    s += `<text class="p-entry-t" x="${X(xc)}" y="${(Zn(D) + 66).toFixed(1)}">${cm(b - a)}</text>`;
+  }
+  $('#plan').innerHTML = s + '</svg>';
+}
+function li(id, k, sub){
+  const e = ESER[id];
+  return `<button class="li" data-id="${id}" aria-current="${sel === id}"><span class="k">${k}</span><span class="a">${esc(e.ad)}${e.tahmin ? '<span class="tah">yaklaşık</span>' : ''}${sub ? `<span class="s">${esc(sub)}</span>` : ''}</span><span class="o">${sayi(e.g)}×${sayi(e.y)}</span></button>`;
+}
+function renderListe(){
+  let h = '';
+  for (const k of WK){
+    h += `<div class="grp"><div class="grp-h">${WALLS[k].ad}</div>`;
+    for (const it of res.walls[k].items) h += li(it.id, `${it.ci + 1} · ${it.n === 1 ? 'tek' : (it.ri === 0 ? 'üst' : 'alt')}`);
+    h += '</div>';
+  }
+  h += `<div class="grp"><div class="grp-h">Şövaleler</div>`;
+  for (const e of DUZEN.easels) h += li(e.art, `Ş${e.n}`, SPOTS[e.spot].ad);
+  $('#liste').innerHTML = h + '</div>';
+}
+function renderKart(){
+  const card = $('#card');
+  if (!sel){ card.hidden = true; return; }
+  const e = ESER[sel];
+  card.hidden = false;
+  $('#cKat').textContent = e.kat;
+  $('#cAd').textContent = e.ad;
+  $('#cMeta').innerHTML = esc(olc(sel)) + (e.tahmin ? '<span class="tah">yaklaşık ölçü</span>' : '');
+  $('#cYer').textContent = yerMetni(sel);
+}
+function sec(id){ sel = id; haloTak(); renderPlan(); renderListe(); renderKart(); }
+
+function surumSec(ad){
+  surumAd = ad; cur = SURUM[ad];
+  res = hesapla(cur);
+  standKur(); yerlestir(); renderPanel();
+  if (mod === 'gez'){ const q = sinirla(camera.position.x, camera.position.z); camera.position.set(q.x, EYE, q.z); }
+  else kameraGit(aktifKam || 'kose');
+}
+
+/* ---------- Tema ---------- */
+function temaUygula(){
+  const cs = getComputedStyle(document.documentElement);
+  const c = n => (cs.getPropertyValue(n).trim() || '#888888');
+  scene.background = new THREE.Color(c('--scene'));
+  MAT.hall.color.copy(lin(c('--hall')));
+  halo.material.color.copy(lin(c('--gold')));
+}
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', temaUygula);
+new MutationObserver(temaUygula).observe(document.documentElement, {attributes:true, attributeFilter:['data-theme']});
+
+/* ---------- Etkileşim ---------- */
+const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(), zemin = new THREE.Plane(new V3(0, 1, 0), 0), tmpV = new V3();
+function isinla(ev){
+  const r = renderer.domElement.getBoundingClientRect();
+  ndc.set(((ev.clientX - r.left)/r.width)*2 - 1, -((ev.clientY - r.top)/r.height)*2 + 1);
+  ray.setFromCamera(ndc, camera);
+}
+function eserBul(o){
+  if (o.userData.art) return o.userData.art;
+  while (o){ if (o.userData && o.userData.easel){ const n = o.userData.easel; return DUZEN.easels.find(e => e.n === n).art; } o = o.parent; }
+  return null;
+}
+let down = null;
+view.addEventListener('pointerdown', ev => {
+  if (ev.target !== renderer.domElement) return;
+  if (ev.pointerType === 'mouse' && ev.button !== 0) return;
+  down = {x:ev.clientX, y:ev.clientY, lx:ev.clientX, ly:ev.clientY, moved:false};
+}, true);
+window.addEventListener('pointermove', ev => {
+  if (!down) return;
+  if (Math.hypot(ev.clientX - down.x, ev.clientY - down.y) > 5) down.moved = true;
+  if (mod === 'gez' && down.moved){
+    yaw += (ev.clientX - down.lx)*0.0045;
+    pitch = clamp(pitch + (ev.clientY - down.ly)*0.0045, -0.8, 0.6);
+    if (walk){ walk.y0 = walk.y1 = yaw; walk.p0 = walk.p1 = pitch; }
+    bakisUygula();
+  }
+  down.lx = ev.clientX; down.ly = ev.clientY;
+});
+window.addEventListener('pointerup', ev => {
+  if (!down) return;
+  const d = down; down = null;
+  if (d.moved) return;
+  isinla(ev);
+  const hit = ray.intersectObjects(pickables, false)[0];
+  const id = hit ? eserBul(hit.object) : null;
+  if (mod === 'gez'){
+    if (id){ sec(id); yakindanBak(id); return; }
+    if (ray.ray.intersectPlane(zemin, tmpV)) yuru(tmpV.x, tmpV.z);
+    return;
+  }
+  sec(id);
+});
+window.addEventListener('pointercancel', () => { down = null; });
+renderer.domElement.addEventListener('wheel', ev => {
+  if (mod !== 'gez') return;
+  ev.preventDefault(); walk = null;
+  const adim = clamp(-ev.deltaY*0.0025, -0.5, 0.5);
+  const q = sinirla(camera.position.x - Math.sin(yaw)*adim, camera.position.z - Math.cos(yaw)*adim);
+  camera.position.set(q.x, EYE, q.z);
+}, {passive:false});
+const TUS = ['w','a','s','d','arrowup','arrowdown','arrowleft','arrowright'];
+window.addEventListener('keydown', ev => {
+  const k = ev.key.toLowerCase();
+  if (k === 'escape'){ if (sel) sec(null); else if (mod === 'gez') kameraGit('kose'); return; }
+  if (mod !== 'gez' || !TUS.includes(k)) return;
+  keys[k] = true; walk = null; ev.preventDefault();
+});
+window.addEventListener('keyup', ev => { keys[ev.key.toLowerCase()] = false; });
+window.addEventListener('blur', () => { for (const k in keys) keys[k] = false; });
+
+document.querySelectorAll('[data-cam]').forEach(b => b.addEventListener('click', () => kameraGit(b.dataset.cam)));
+document.querySelectorAll('[data-surum]').forEach(b => b.addEventListener('click', () => surumSec(b.dataset.surum)));
+$('#liste').addEventListener('click', ev => {
+  const b = ev.target.closest('.li'); if (!b) return;
+  sec(b.dataset.id);
+  if (mod === 'gez') yakindanBak(b.dataset.id);
+});
+$('#cKapat').addEventListener('click', () => sec(null));
+$('#cBak').addEventListener('click', () => { if (sel) yakindanBak(sel); });
+
+/* ---------- Başlat ---------- */
+function boyut(){
+  const r = view.getBoundingClientRect();
+  if (r.width < 2 || r.height < 2) return;
+  renderer.setSize(r.width, r.height, false);
+  camera.aspect = r.width/r.height; camera.updateProjectionMatrix();
+}
+new ResizeObserver(boyut).observe(view);
+boyut(); temaUygula();
+res = hesapla(cur);
+standKur(); yerlestir(); renderPanel(); ipucu();
+kameraGit('kose', true);
+if (document.fonts && document.fonts.load) document.fonts.load('60px Marcellus').then(() => fasCiz(cur.W)).catch(() => {});
+
+let son = performance.now();
+(function dongu(now){
+  requestAnimationFrame(dongu);
+  const dt = Math.min(0.05, (now - son)/1000); son = now;
+  if (mod === 'gez'){
+    if (walk){
+      const u = Math.min(1, (now - walk.s)/walk.d), e = u < 0.5 ? 2*u*u : 1 - Math.pow(-2*u + 2, 2)/2;
+      camera.position.lerpVectors(walk.from, walk.to, e);
+      yaw = walk.y0 + (walk.y1 - walk.y0)*e; pitch = walk.p0 + (walk.p1 - walk.p0)*e;
+      bakisUygula();
+      if (u >= 1) walk = null;
+    } else {
+      let f = 0, r = 0;
+      if (keys.w || keys.arrowup) f += 1;
+      if (keys.s || keys.arrowdown) f -= 1;
+      if (keys.d) r += 1;
+      if (keys.a) r -= 1;
+      if (keys.arrowleft) yaw += 1.7*dt;
+      if (keys.arrowright) yaw -= 1.7*dt;
+      if (f || r){
+        const sp = 1.4*dt;
+        const nx = camera.position.x + (-Math.sin(yaw)*f + Math.cos(yaw)*r)*sp;
+        const nz = camera.position.z + (-Math.cos(yaw)*f - Math.sin(yaw)*r)*sp;
+        const q = sinirla(nx, nz); camera.position.set(q.x, EYE, q.z);
+      }
+      if (keys.arrowleft || keys.arrowright) bakisUygula();
+    }
+  } else {
+    if (tw){
+      const u = Math.min(1, (now - tw.s)/tw.d), e = u < 0.5 ? 2*u*u : 1 - Math.pow(-2*u + 2, 2)/2;
+      camera.position.lerpVectors(tw.p0, tw.p, e); controls.target.lerpVectors(tw.t0, tw.t, e);
+      if (u >= 1) tw = null;
+    }
+    controls.update();
+  }
+  renderer.render(scene, camera);
+})(son);
+})();
+</script>
+</body>
+</html>
