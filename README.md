@@ -16,6 +16,6 @@ El emeği boncuk ve elmas mozaik tabloların sergisi için hazırlanmış stant 
 - **Döndürme:** sürükleyin, tekerlek ya da iki parmakla yakınlaşın
 - **İçeride gez:** sürükleyerek etrafa bakın, yere tıklayınca oraya yürüyün, esere tıklayınca önüne gidin; klavyede W A S D ve ok tuşları
 
-Ölçüler çerçeve dahildir. Âyetü'l-Kürsî, Osmanlı Arması ve Kükreyen Leopar'ın ölçüleri yaklaşıktır.
+Ölçüler çerçeve dahildir. Âyetü'l-Kürsî ve Osmanlı Arması'nın ölçüleri yaklaşıktır.
 
 Sayfa tek bir `index.html` dosyasıdır; 3B sahne [three.js](https://threejs.org) r128 ile çizilir, eser görselleri `eserler/` klasöründedir.
